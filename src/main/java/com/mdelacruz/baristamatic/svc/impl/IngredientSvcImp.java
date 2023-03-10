@@ -38,7 +38,7 @@ public class IngredientSvcImp implements IngredientSvc {
 		
 		return ingredientDTOS;
 	}
-	
+
 	@Override
 	public int updateIngredientQty(Long id, Long quantity) {
 		int updated = 0;

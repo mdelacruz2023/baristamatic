@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -42,8 +43,9 @@ public class IngredientControllerTest {
     private static final int VALID_INGREDIENT_TOTAL = 9;
     private static final int INVALID_INGREDIENT_TOTAL = 1;
     
+    @DisplayName("JUnit test for getAllIngredients method")
 	@Test
-	public void getIngredientInventory_shouldReturnListOfIngredients() throws Exception {
+	public void givenIngredientList_whenGetAllIngredients_thenReturnIngredientDTOList() throws Exception {
 
 		List<IngredientDTO> ingredientDTOS = new ArrayList<>();
 		
@@ -65,9 +67,9 @@ public class IngredientControllerTest {
 	      		.andDo(print());
 	}
 
+    @DisplayName("JUnit test for getAllIngredients method - negative scenario")
 	@Test
-	public void getIngredientInventory_shouldReturnNotFoundWhenEmptyList() throws Exception {
-
+	public void givenEmptyIngredientList_whenGetAllIngredients_thenReturnNotFound() throws Exception {
 		List<IngredientDTO> ingredientDTOS = new ArrayList<>();
 		ingredientDTOS = Collections.emptyList();
 
@@ -79,8 +81,25 @@ public class IngredientControllerTest {
 	      		.andDo(print());
 	}
 	
+    @DisplayName("JUnit test for restockIngredients method")
 	@Test
-	public void restockIngredients_shouldReturnInternalServerError_InvalidUpdate() throws Exception {
+	public void givenIngredientList_whenRestockIngredients_thenReturnOk() throws Exception {
+		IngredientInventoryDTO ingredientInventoryDTO = new IngredientInventoryDTO();
+		ingredientInventoryDTO.setRestock(true);
+	
+		when(ingredientSvc.restockIngredients()).thenReturn(VALID_INGREDIENT_TOTAL);
+		
+	    mockMvc.perform(post(POST_INGREDIENTS_RESTOCK_URI)
+	  	      		.content(asJsonString(ingredientInventoryDTO))
+	  	      		.contentType(MediaType.APPLICATION_JSON)
+	  	      		.accept(MediaType.APPLICATION_JSON))
+	        	.andExpect(status().isOk())
+	        	.andDo(print());
+	}
+
+    @DisplayName("JUnit test for restockIngredients method - negative scenario")
+	@Test
+	public void givenIngredientList_whenRestockIngredients_returnInvalidRowUpdate_thenReturnError() throws Exception {
 		
 		IngredientInventoryDTO ingredientInventoryDTO = new IngredientInventoryDTO();
 		ingredientInventoryDTO.setRestock(true);
@@ -95,21 +114,6 @@ public class IngredientControllerTest {
 	        	.andDo(print());
 	}
 	
-	@Test
-	public void restockIngredients_shouldReturnOKWhenAllIngredientsUpdated() throws Exception {
-		IngredientInventoryDTO ingredientInventoryDTO = new IngredientInventoryDTO();
-		ingredientInventoryDTO.setRestock(true);
-	
-		when(ingredientSvc.restockIngredients()).thenReturn(VALID_INGREDIENT_TOTAL);
-		
-	    mockMvc.perform(post(POST_INGREDIENTS_RESTOCK_URI)
-	  	      		.content(asJsonString(ingredientInventoryDTO))
-	  	      		.contentType(MediaType.APPLICATION_JSON)
-	  	      		.accept(MediaType.APPLICATION_JSON))
-	        	.andExpect(status().isOk())
-	        	.andDo(print());
-	}
-
 	//Helper Methods
 	private IngredientDTO createIngredientDTO(Long ingredientId, String name, Long quantity) {
 		IngredientDTO ingredientDTO = new IngredientDTO();
@@ -119,7 +123,7 @@ public class IngredientControllerTest {
 		return ingredientDTO;
 	}
 	
-	private static String asJsonString(final Object obj) {
+	private String asJsonString(final Object obj) {
 	    try {
 	        return new ObjectMapper().writeValueAsString(obj);
 	    } catch (Exception e) {

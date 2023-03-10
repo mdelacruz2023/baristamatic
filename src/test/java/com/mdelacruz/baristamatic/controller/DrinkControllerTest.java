@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
-
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -43,8 +43,9 @@ public class DrinkControllerTest {
     private static final String GET_DRINK_MENU_URI = "/api/v1/drinks";
     private static final String POST_DRINK_ORDER_URI = "/api/v1/drinks/orders";
     
+    @DisplayName("JUnit test for getAllDrinks method")
 	@Test
-	public void getAllDrinks_shouldReturnListOfDrinks() throws Exception {
+	public void givenDrinkList_whenGetAllDrinks_thenReturnDrinkDTOList() throws Exception {
 
 		List<DrinkDTO> allDrinkDTOs = new ArrayList<>();
 		
@@ -67,8 +68,9 @@ public class DrinkControllerTest {
 	      		.andDo(print());
 	}
 
+    @DisplayName("JUnit test for getAllDrinks method - negative scenario")
 	@Test
-	public void getAllDrinks_shouldReturnNotFoundWhenEmptyList() throws Exception {
+	public void givenEmptyDrinkList_whenGetAllDrinks_thenReturnNotFound() throws Exception {
 
 		List<DrinkDTO> allDrinkDTOs = new ArrayList<>();
 		allDrinkDTOs = Collections.emptyList();
@@ -80,26 +82,10 @@ public class DrinkControllerTest {
 	      		.andExpect(status().isNotFound())
 	      		.andDo(print());
 	}
-	
+    
+    @DisplayName("JUnit test for orderDrink method")
 	@Test
-	public void orderDrink_shouldReturnNotFoundWhenInvalidDrinkId() throws Exception {
-		Long invalidDrinkId = 10L;
-		
-		DrinkOrderDTO orderDTO = new DrinkOrderDTO();
-		orderDTO.setDrinkId(invalidDrinkId);
-		
-		when(drinkService.getDrinkById(invalidDrinkId)).thenReturn(Optional.empty());
-	    
-	    mockMvc.perform(post(POST_DRINK_ORDER_URI)
-	    			.content(asJsonString(orderDTO))
-	  	      		.contentType(MediaType.APPLICATION_JSON)
-	  	      		.accept(MediaType.APPLICATION_JSON))
-	        	.andExpect(status().isNotFound())
-	        	.andDo(print());
-	}
-	
-	@Test
-	public void orderDrink_shouldReturnOKWhenValidAndAvailableDrinkId() throws Exception {
+	public void givenDrinkWithAvailableIngredients_whenOrderDrink_thenReturnOk() throws Exception {
 		Long validDrinkId = 1L;
 		
 		DrinkOrderDTO orderDTO = new DrinkOrderDTO();
@@ -118,8 +104,27 @@ public class DrinkControllerTest {
 	        	.andDo(print());
 	}
 
+    @DisplayName("JUnit test for orderDrink method - negative scenario")
 	@Test
-	public void orderDrink_shouldReturnBadRequestWhenValidButUnavailableDrinkId() throws Exception {
+	public void givenInvalidDrinkId_whenOrderDrink_thenReturnNotFound() throws Exception {
+		Long invalidDrinkId = 10L;
+		
+		DrinkOrderDTO orderDTO = new DrinkOrderDTO();
+		orderDTO.setDrinkId(invalidDrinkId);
+		
+		when(drinkService.getDrinkById(invalidDrinkId)).thenReturn(Optional.empty());
+	    
+	    mockMvc.perform(post(POST_DRINK_ORDER_URI)
+	    			.content(asJsonString(orderDTO))
+	  	      		.contentType(MediaType.APPLICATION_JSON)
+	  	      		.accept(MediaType.APPLICATION_JSON))
+	        	.andExpect(status().isNotFound())
+	        	.andDo(print());
+	}
+    
+    @DisplayName("JUnit test for orderDrink method - negative scenario")
+	@Test
+	public void givenDrinkWithoutAvailableIngredients_whenOrderDrink_thenReturnBadRequest() throws Exception {
 		Long validDrinkId = 1L;
 		
 		DrinkOrderDTO orderDTO = new DrinkOrderDTO();
@@ -156,50 +161,4 @@ public class DrinkControllerTest {
 	        throw new RuntimeException(e);
 	    }
 	}
-//    Ingredient ingredient1 = new Ingredient();
-//    ingredient1.setIngredientId(2L);
-//    ingredient1.setName("Coffee");
-//    ingredient1.setQuantity(10L);
-//    ingredient1.setUnitCost(new BigDecimal(0.75));
-//    
-//    Ingredient ingredient2 = new Ingredient();
-//    ingredient2.setIngredientId(2L);
-//    ingredient2.setName("Sugar");
-//    ingredient2.setQuantity(10L);
-//    ingredient2.setUnitCost(new BigDecimal(0.25));
-//    
-//    Ingredient ingredient3 = new Ingredient();
-//    ingredient3.setIngredientId(3L);
-//    ingredient3.setName("Cream");
-//    ingredient3.setQuantity(10L);
-//    ingredient3.setUnitCost(new BigDecimal(0.25));
-//    
-//    Drink drink1 = new Drink();
-//    drink1.setDrinkId(1L);
-//    drink1.setName("Coffee");
-//    
-//    List<DrinkIngredient> drinkIngredients1 = new ArrayList<>();
-//    
-//    DrinkIngredient drinkIngredient1 = new DrinkIngredient();
-//    drinkIngredient1.setIngredient(ingredient1);
-//    drinkIngredient1.setRequiredQuantity(3L);
-//    
-//    DrinkIngredient drinkIngredient2 = new DrinkIngredient();
-//    drinkIngredient2.setIngredient(ingredient2);
-//    drinkIngredient2.setRequiredQuantity(1L);
-//    
-//    DrinkIngredient drinkIngredient3 = new DrinkIngredient();
-//    drinkIngredient3.setIngredient(ingredient3);
-//    drinkIngredient3.setRequiredQuantity(1L);
-//    
-//    drinkIngredient1.setIngredient(ingredient1);
-//    drinkIngredient1.setIngredient(ingredient2);
-//    drinkIngredient1.setIngredient(ingredient3);
-//    
-//    drink1.setDrinkIngredients(drinkIngredients1);
-//    
-//    List<Drink> allDrinks = new ArrayList<>();
-//    allDrinks.add(drink1);
-
-	
 }

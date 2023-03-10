@@ -5,6 +5,8 @@ import com.mdelacruz.baristamatic.dto.IngredientDTO;
 
 public interface IngredientSvc {
 	List<IngredientDTO> getAllIngredients();
+	
 	int updateIngredientQty(Long id, Long quantity);
+	
 	int restockIngredients();
 }
