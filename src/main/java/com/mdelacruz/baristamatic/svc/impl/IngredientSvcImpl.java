@@ -12,7 +12,7 @@ import com.mdelacruz.baristamatic.repository.IngredientRepository;
 import com.mdelacruz.baristamatic.svc.IngredientSvc;
 
 @Service
-public class IngredientSvcImp implements IngredientSvc {
+public class IngredientSvcImpl implements IngredientSvc {
 	
 	@Autowired
 	IngredientRepository ingredientRepository;

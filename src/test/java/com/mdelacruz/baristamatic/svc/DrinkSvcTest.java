@@ -23,7 +23,7 @@ import com.mdelacruz.baristamatic.domain.Ingredient;
 import com.mdelacruz.baristamatic.dto.DrinkDTO;
 import com.mdelacruz.baristamatic.repository.DrinkRepository;
 import com.mdelacruz.baristamatic.svc.impl.DrinkSvcImpl;
-import com.mdelacruz.baristamatic.svc.impl.IngredientSvcImp;
+import com.mdelacruz.baristamatic.svc.impl.IngredientSvcImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class DrinkSvcTest {
@@ -32,7 +32,7 @@ public class DrinkSvcTest {
 	private DrinkRepository drinkRepository;
     
 	@Mock
-    private IngredientSvcImp ingredientSvc;
+    private IngredientSvcImpl ingredientSvc;
     
     @InjectMocks
     private DrinkSvcImpl drinkSvc;

@@ -17,7 +17,7 @@ import com.mdelacruz.baristamatic.domain.Ingredient;
 import com.mdelacruz.baristamatic.dto.IngredientDTO;
 import com.mdelacruz.baristamatic.repository.IngredientRepository;
 
-import com.mdelacruz.baristamatic.svc.impl.IngredientSvcImp;
+import com.mdelacruz.baristamatic.svc.impl.IngredientSvcImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -30,7 +30,7 @@ public class IngredientSvcTest {
 	private IngredientRepository ingredientRepository;
     
     @InjectMocks
-    private IngredientSvcImp ingredientSvc;
+    private IngredientSvcImpl ingredientSvc;
 
     private List<Ingredient> ingredientList = new ArrayList<>();
         
