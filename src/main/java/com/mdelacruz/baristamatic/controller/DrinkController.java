@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mdelacruz.baristamatic.domain.Drink;
 import com.mdelacruz.baristamatic.dto.DrinkDTO;
 import com.mdelacruz.baristamatic.dto.DrinkOrderDTO;
+import com.mdelacruz.baristamatic.dto.MessageDTO;
 import com.mdelacruz.baristamatic.svc.DrinkSvc;
 
 @RestController
@@ -25,6 +26,9 @@ public class DrinkController {
 	@Autowired
 	DrinkSvc drinkService;
 	
+	private static final String SUCCESS_MESSAGE_KEY = "Success";
+	private static final String ERROR_MESSAGE_KEY = "Error";
+	
 	/**
 	 * Returns the list of drinks with the following information: drink id, name, cost and availability.
 	 */
@@ -33,8 +37,12 @@ public class DrinkController {
 	public ResponseEntity<?> getDrinkMenu() {
 		try {
 			List<DrinkDTO> drinkDTOs = drinkService.getAllDrinks();
+			
 			if (drinkDTOs.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				MessageDTO messageDTO = new MessageDTO();
+				messageDTO.setKey(ERROR_MESSAGE_KEY);
+				messageDTO.setMessage("Drink list is not available");
+				return new ResponseEntity<>(messageDTO, HttpStatus.NOT_FOUND);
 			}
 			return new ResponseEntity<>(drinkDTOs, HttpStatus.OK);
 		}
@@ -49,20 +57,30 @@ public class DrinkController {
 	@PostMapping(path = "/drinks/orders",  
 				 consumes = MediaType.APPLICATION_JSON_VALUE, 
 				 produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> orderDrink(@RequestBody DrinkOrderDTO orderDTO) {
+	public ResponseEntity<?> orderDrink(@RequestBody DrinkOrderDTO orderDTO) {
 		try {
 			//Validate the input
 			Optional<Drink> drink = drinkService.getDrinkById(orderDTO.getDrinkId());
 			if (drink.isEmpty()) {
-				return new ResponseEntity<>("Drink ID is not valid.", HttpStatus.NOT_FOUND);
+				MessageDTO messageDTO = new MessageDTO();
+				messageDTO.setKey(ERROR_MESSAGE_KEY);
+				messageDTO.setMessage("Drink ID is not valid.");
+				return new ResponseEntity<>(messageDTO, HttpStatus.NOT_FOUND);
 			}
 			
 			boolean isOrderProcessed = drinkService.processDrinkOrder(orderDTO.getDrinkId());
 			
 			if (isOrderProcessed) {
-				return new ResponseEntity<>("The order has been processed successfully.", HttpStatus.CREATED);
+				MessageDTO messageDTO = new MessageDTO();
+				messageDTO.setKey(SUCCESS_MESSAGE_KEY);
+				messageDTO.setMessage("The order has been processed successfully.");
+				return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
 			}
-			return new ResponseEntity<>("Order cannot be processed. One or more ingredients are not available.", HttpStatus.BAD_REQUEST);
+			
+			MessageDTO messageDTO = new MessageDTO();
+			messageDTO.setKey(ERROR_MESSAGE_KEY);
+			messageDTO.setMessage("Order cannot be processed. One or more ingredients are not available.");
+			return new ResponseEntity<>(messageDTO, HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
